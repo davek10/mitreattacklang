@@ -1,19 +1,17 @@
-## enterpriselang
+# exampleLang
 
-enterpriselang is a domain-specific MAL language based on the MITRE ATT&CK® Matrix, which intends to assess the cyber security of enterprise systems from a holistic point of view.
+exampleLang is a MAL language intended to demonstrate the Maven
+project structure of a MAL language.
 
-* We keep updating the file `enterpriselang.mal` and the folder `securiCAD_models`. The files within the folder `single_attacks` are not up-to-date, please refer to the file `enterpriselang.mal`.
+This project has the following structure:
 
-### This project can be built according to exampleLang (https://github.com/mal-lang/exampleLang)
-
-* The file `pom.xml` is the Maven configuration file of the project, make sure that <kernelcad.version> is 1.6.2-SNAPSHOT in pom.xml. 
+* The file `pom.xml` is the Maven configuration file of the project.
 * The directory `src/main/mal` contains the MAL specification
   `exampleLang.mal`, which is the MAL specification of exampleLang.
 * The directory `src/main/resources/icons` contains SVG icons for the
   assets in exampleLang.
 * The directory `src/test/java/org/mal_lang/examplelang/test`
   contains the unit tests of exampleLang.
-* It requires a new alpha version of securiCAD Professional. The instructions on how to download it here: https://github.com/foreseeti/foreseeti-maven-repo.
 
 ## Apache Maven
 
@@ -132,10 +130,9 @@ do the following:
 * Update `LICENSE` with a license of your choice
   * Update copyright notices to reflect your license in
     * `NOTICE`
-    * `ACKNOWLEDGEMENTS`
     * `pom.xml`
     * `src/main/mal/exampleLang.mal`
-    * `src/test/java/org/mal_lang/examplelang/test/TestExampleLang.java`
+    * `src/test/java/org/mal_lang/examplelang/test/*.java`
 * Update `README.md` with relevant information about your language.
   Information about how to use Markdown can be found at
   <https://help.github.com/en/articles/basic-writing-and-formatting-syntax>.
@@ -166,3 +163,18 @@ do the following:
 * Change the package name of the unit tests to the test package name
   of your language
   * Example: `package com.example.mylang.test;`
+
+## License
+
+Copyright © 2020 [Foreseeti AB](https://www.foreseeti.com/)
+
+All files distributed in the exampleLang project are licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0), except for the following files:
+
+| File | License |
+| --- | --- |
+| [`Host.svg`](src/main/resources/icons/Host.svg) | <img src="src/main/resources/icons/Host.svg" alt="Computer" width="32" height="32"/> [Computer](https://thenounproject.com/term/computer/576625/) by [✦ Shmidt Sergey ✦](https://thenounproject.com/monstercritic/) from [the Noun Project](https://thenounproject.com/) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+| [`Network.svg`](src/main/resources/icons/Network.svg) | <img src="src/main/resources/icons/Network.svg" alt="Network" width="32" height="32"/> [Network](https://thenounproject.com/term/network/691907/) by [✦ Shmidt Sergey ✦](https://thenounproject.com/monstercritic/) from [the Noun Project](https://thenounproject.com/) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+| [`Password.svg`](src/main/resources/icons/Password.svg) | <img src="src/main/resources/icons/Password.svg" alt="Lock" width="32" height="32"/> [Lock](https://thenounproject.com/term/lock/576530/) by [✦ Shmidt Sergey ✦](https://thenounproject.com/monstercritic/) from [the Noun Project](https://thenounproject.com/) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+| [`User.svg`](src/main/resources/icons/User.svg) | <img src="src/main/resources/icons/User.svg" alt="User" width="32" height="32"/> [User](https://thenounproject.com/term/user/581261/) by [✦ Shmidt Sergey ✦](https://thenounproject.com/monstercritic/) from [the Noun Project](https://thenounproject.com/) is licensed under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
+
+See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE) for details.

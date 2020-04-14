@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright 2019 Foreseeti AB
+Copyright 2020 Foreseeti AB
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ limitations under the License.
   <version>1.0.0</version>
   <packaging>jar</packaging>
 
-  <name>attacklang</name>
+  <name>subattackLang</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,7 +31,7 @@ limitations under the License.
     <kernelcad.version>1.6.2-SNAPSHOT</kernelcad.version>
     <corelib.version>${kernelcad.version}</corelib.version>
     <simulator.version>${kernelcad.version}</simulator.version>
-    <mal.file>mitreattacklang.mal</mal.file>
+    <mal.file>subattacklang.mal</mal.file>
     <mal.securicad.package>org.mal_lang.attacklang</mal.securicad.package>
     <mal.reference.package>org.mal_lang.attacklang.test</mal.reference.package>
   </properties>
