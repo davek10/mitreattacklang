@@ -1,0 +1,33 @@
+#id: "org.mal_lang.subattacklang"
+#version: "1.0.0"
+
+category Person {
+    asset User {
+      & phishing
+        -> computer.os.attemptPhishing
+
+      # userTraining
+        -> phishing
+
+    }
+}
+
+category Software {
+
+    asset OS {
+      | userRights
+
+      & attemptPhishing
+        -> userRights
+    }
+}
+
+category Hardware {
+    asset Computer {
+    }
+}
+
+associations {
+    User [user] * <--Use--> * [computer] Computer
+    OS [os] * <--System--> * [computer] Computer
+}

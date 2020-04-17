@@ -1,0 +1,61 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< org.mal-lang:subattacklang >---------------------
+[INFO] Building subattackLang 1.0.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ subattacklang ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ subattacklang ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- mal-maven-plugin:0.1.0-SNAPSHOT:reference (generate-test-code) @ subattacklang ---
+[INFO] Compiling MAL specification C:\Users\David\Documents\MAL\mitreattacklang\src\main\mal\subattacklang.mal
+[INFO] Adding test compile source root C:\Users\David\Documents\MAL\mitreattacklang\target\generated-test-sources
+[INFO] Adding test resource C:\Users\David\Documents\MAL\mitreattacklang\target\generated-test-sources/attackerProfile.ttc
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ subattacklang ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory C:\Users\David\Documents\MAL\mitreattacklang\src\test\resources
+[INFO] Copying 1 resource
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ subattacklang ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 11 source files to C:\Users\David\Documents\MAL\mitreattacklang\target\test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.0.0-M4:test (default-test) @ subattacklang ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running org.mal_lang.subattacklang.test.TestPhishing2
+debug attacking
+The model contains 6 assets and 6 attack steps.
+AttackStep.allAttackSteps = [org.mal_lang.subattacklang.test.User$Phishing@6107227e, org.mal_lang.subattacklang.test.User$Phishing@8909f18, org.mal_lang.subattacklang.test.OS$UserRights@79ca92b9, org.mal_lang.subattacklang.test.OS$AttemptPhishing@1460a8c0, org.mal_lang.subattacklang.test.OS$UserRights@4f638935, org.mal_lang.subattacklang.test.OS$AttemptPhishing@4387b79e]
+The expected parents of user1.phishing are []
+The expected parents of user2.phishing are []
+The expected parents of os1.userRights are [org.mal_lang.subattacklang.test.OS$AttemptPhishing@1460a8c0]
+The expected parents of os1.attemptPhishing are [org.mal_lang.subattacklang.test.User$Phishing@6107227e]
+The expected parents of os2.userRights are [org.mal_lang.subattacklang.test.OS$AttemptPhishing@4387b79e]
+The expected parents of os2.attemptPhishing are [org.mal_lang.subattacklang.test.User$Phishing@8909f18]
+activeAttackSteps = [org.mal_lang.subattacklang.test.User$Phishing@6107227e]
+Updating children of user1.phishing
+activeAttackSteps = [org.mal_lang.subattacklang.test.OS$AttemptPhishing@1460a8c0]
+Updating children of os1.attemptPhishing
+activeAttackSteps = [org.mal_lang.subattacklang.test.OS$UserRights@79ca92b9]
+Updating children of os1.userRights
++ os2.userRights was not reached, as expected.
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s - in org.mal_lang.subattacklang.test.TestPhishing2
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.630 s
+[INFO] Finished at: 2020-04-17T14:45:25+02:00
+[INFO] ------------------------------------------------------------------------
