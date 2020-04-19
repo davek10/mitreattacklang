@@ -44,20 +44,37 @@ category Software {
       & infected
 
       | userRights
-        -> infected
+          -> userCommandAndScriptingInterpreter
 
       | adminRights
-        ->  userRights,
-
+          -> userRights,
+             adminCommandAndScriptingInterpreter
 
       | systemRights
-        ->  adminRights
+          -> adminRights
 
-      & attemptPhishing
-        -> userRights
+      & userCommandAndScriptingInterpreter
+          -> dataCollected
+
+      & adminCommandAndScriptingInterpreter
+          user info: "Administrator permissions are required to use PowerShell to connect to remote systems."
+          -> dataCollected
 
       | userExecution
-        -> userRights
+        -> userRights,
+           userCommandAndScriptingInterpreter
+
+      | dataCollected
+        user info: "All techniques under exfiltration tactic"
+
+      # disableOrRemoveFeatureOrProgram
+        user info: "https://attack.mitre.org/techniques/T1064/"
+        -> userCommandAndScriptingInterpreter,
+           adminCommandLineInterface
+
+     # codeSigning
+         -> userCommandAndScriptingInterpreter,
+            adminCommandLineInterface
 
       # restrictWebBasedContent
         -> attemptPhishing,
@@ -67,31 +84,51 @@ category Software {
         -> attemptUserExecution
 
       # executionPrevention
-        -> attemptUserExecution
+        -> attemptUserExecution,
+           userCommandAndScriptingInterpreter,
+           adminCommandLineInterface
 
       # antivirus
-        -> attemptPhishing
+        -> attemptUserExecution
     }
 
     asset Windows extends OS {
-    }
 
+      & userCommandAndScriptingInterpreter
+          +>
+
+      & adminCommandAndScriptingInterpreter
+          +> internalNetwork.remoteSystemsConnection // PowerShell
+    }
     asset Linux extends OS {
     }
 
     asset MacOS extends OS {
+      & userCommandAndScriptingInterpreter
+          +> infected,                               // AppleScript
+             internalNetwork.remoteAccessSoftware
+             //executeCode
     }
 }
 
 category Network {
-    asset InternalNetwork {
-    }
+  asset InternalNetwork {
 
-    asset ExternalNetwork {
-    }
+    & remoteAccessSoftware
 
-    asset Firewall {
-    }
+    | remoteSystemsConnection
+        -> dataFromNetworkSharedDrive
+
+    & dataFromNetworkSharedDrive
+        -> dataCollected,
+           //sensitiveDataCollected
+  }
+
+  asset ExternalNetwork {
+  }
+
+  asset Firewall {
+  }
 }
 
 category Hardware {
