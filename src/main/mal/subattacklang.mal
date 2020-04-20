@@ -3,8 +3,21 @@
 
 category Person {
     asset User {
-      | phishing
-        -> attemptUserExecution
+      & phishing
+        -> _spearphisingAttachment,
+           _spearphisingLink,
+           _spearphisingService
+
+        //attemptUserExecution
+
+      & _spearphisingAttachment @hidden
+          -> attemptUserExecution
+
+      & _spearphisingLink @hidden
+          -> attemptUserExecution
+
+      & _spearphisingService @hidden
+          -> attemptUserExecution
 
       | attemptUserExecution
         -> computer.os.attemptUserExecution
@@ -71,41 +84,39 @@ category Software {
       & infected
 
       | userRights
-          -> userCommandAndScriptingInterpreter
+          -> _python
 
       | adminRights
-          -> userRights,
-             adminCommandAndScriptingInterpreter
+          -> userRights
 
       | systemRights
           -> adminRights
 
-      & userCommandAndScriptingInterpreter
-          -> dataCollected
+      & commandAndScriptingInterpreter
+          -> _python
 
-      & adminCommandAndScriptingInterpreter
-          user info: "Administrator permissions are required to use PowerShell to connect to remote systems."
-          -> dataCollected
+      | _python @hidden
+          ->
 
       | userExecution
-        -> userRights,
-           userCommandAndScriptingInterpreter
+          -> userRights,
+             userCommandAndScriptingInterpreter
 
       | dataCollected
-        user info: "All techniques under exfiltration tactic"
+          user info: "All techniques under exfiltration tactic"
 
       # disableOrRemoveFeatureOrProgram
-        user info: "https://attack.mitre.org/techniques/T1064/"
-        -> userCommandAndScriptingInterpreter,
-           adminCommandLineInterface
+          user info: "https://attack.mitre.org/techniques/T1064/"
+          -> userCommandAndScriptingInterpreter,
+             adminCommandLineInterface
 
      # codeSigning
          -> userCommandAndScriptingInterpreter,
             adminCommandLineInterface
 
       # restrictWebBasedContent
-        -> attemptPhishing,
-           attemptUserExecution
+          -> computer.user.phishing,
+             attemptUserExecution
 
       # networkIntrusionPrevention
         -> attemptUserExecution
@@ -121,8 +132,39 @@ category Software {
 
     asset Windows extends OS {
 
-      & userCommandAndScriptingInterpreter
-          +>
+      | userRights
+          +> _powerShellUser,
+             _windowsCommandShell,
+             _VBScriptUser
+
+      | adminRights
+          +> adminCommandAndScriptingInterpreter
+
+      | systemRights
+          +> systemCommandAndScriptingInterpreter
+
+      & commandAndScriptingInterpreter
+          +> _powerShellUser,
+             _powerShellAdmin,
+             _windowsCommandShell,
+             _VBScriptUser,
+             _VBScriptAdmin,
+             _VBScriptSystem
+
+      & _powerShellUser @hidden
+          ->
+
+      & _powerShellAdmin @hidden
+          developer info: "Administrator permissions are required to use PowerShell to connect to remote systems."
+          -> internalNetwork.remoteSystemsConnection
+
+      & _VBScriptUser @hidden
+
+      & _VBScriptAdmin @hidden
+
+      & _VBScriptSystem @hidden
+
+      & _windowsCommandShell @hidden
 
       & adminCommandAndScriptingInterpreter
           +> internalNetwork.remoteSystemsConnection // PowerShell
@@ -135,6 +177,19 @@ category Software {
           +> infected,                               // AppleScript
              internalNetwork.remoteAccessSoftware
              //executeCode
+      | systemRights
+          +> _bashRoot
+
+      & commandAndScriptingInterpreter
+          +> _appleScript,
+             _bashUser
+             _bashRoot
+
+      & _appleScript @hidden
+          -> internalNetwork.remoteAccessSoftware
+
+      & _bash @hidden
+          ->
     }
 }
 
