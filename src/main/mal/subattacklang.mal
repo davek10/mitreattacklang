@@ -65,27 +65,25 @@ category Software {
       | systemRights
           -> adminRights
 
-      & commandAndScriptingInterpreter
+      | commandAndScriptingInterpreter
           -> _python
 
-      | _python @hidden
+      & _python @hidden
           ->
 
       | userExecution
           -> userRights,
-             userCommandAndScriptingInterpreter
+             commandAndScriptingInterpreter
 
       | dataCollected
           user info: "All techniques under exfiltration tactic"
 
       # disableOrRemoveFeatureOrProgram
           user info: "https://attack.mitre.org/techniques/T1064/"
-          -> userCommandAndScriptingInterpreter,
-             adminCommandLineInterface
+          -> commandAndScriptingInterpreter,
 
      # codeSigning
-         -> userCommandAndScriptingInterpreter,
-            adminCommandLineInterface
+         -> commandAndScriptingInterpreter,
 
       # restrictWebBasedContent
           -> computer.user.phishing,
@@ -96,8 +94,7 @@ category Software {
 
       # executionPrevention
         -> attemptUserExecution,
-           userCommandAndScriptingInterpreter,
-           adminCommandLineInterface
+           commandAndScriptingInterpreter,
 
       # antivirus
         -> attemptUserExecution
@@ -111,12 +108,13 @@ category Software {
              _VBScriptUser
 
       | adminRights
-          +> adminCommandAndScriptingInterpreter
+          +> _powerShellAdmin,
+             _VBScriptAdmin
 
       | systemRights
-          +> systemCommandAndScriptingInterpreter
+          +> _VBScriptSystem
 
-      & commandAndScriptingInterpreter
+      | commandAndScriptingInterpreter
           +> _powerShellUser,
              _powerShellAdmin,
              _windowsCommandShell,
@@ -149,7 +147,7 @@ category Software {
       | systemRights
           +> _bashRoot
 
-      & commandAndScriptingInterpreter
+      | commandAndScriptingInterpreter
           +> _bashUser,
              _bashRoot
 
