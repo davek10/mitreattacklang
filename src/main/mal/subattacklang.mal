@@ -31,10 +31,37 @@ category Person {
     }
 }
 
+
 category Software {
 
     asset Service {
     }
+
+    asset Credentials{
+      | access
+        -> compromise
+
+      | compromise
+
+      | accessWithPassword
+        -> compromise
+
+      # passwordProtected
+        -> access
+    }
+
+    asset PrivateKey extends Credentials{
+
+      | bruteForce
+        -> compromise
+
+      | compromise
+        +> account.accessWithPassword
+    }
+
+    asset Account extends Credentials{
+    }
+
 
     asset Browser {
     }
@@ -139,10 +166,17 @@ category Hardware {
 
     }
 
+    asset server{
+
+    }
+
 }
 
 associations {
 
+    PrivateKey [privateKey] * <--Protects--> * [account] Account
+
+    Account [account] * <--Access--> [server] 1..* [server] Server
 
     User [user] * <--Use--> * [computer] Computer
 
@@ -171,17 +205,21 @@ associations {
 
 //    Service [service8] * <--Contain--> * [thirdpartySoftware5] ThirdpartySoftware
     Service [service] * <--Connect--> * [c2Server2] C2Server
+    Service [service] * <--Provide--> * [server] Server
 
     InternalNetwork [internalNetwork] * <--Connect--> * [externalNetwork] ExternalNetwork
     InternalNetwork [internalNetwork] * <--Connect--> * [computer] Computer
     InternalNetwork [internalNetwork] * <--Use--> * [administrator] Administrator
+    InternalNetwork [internalNetwork] * <--Connect--> * [server] Server
     ExternalNetwork [externalNetwork] * <--Connect--> * [computer] Computer
     InternalNetwork [internalNetwork] * <--Contain--> * [service] Service
     ExternalNetwork [externalNetwork] * <--Use--> * [administrator] Administrator
+    ExternalNetwork [externalNetwork] * <--Connect--> * [server] Server
 
     InternalNetwork [internalNetwork] * <--Protect--> 0..1 [firewall] Firewall
     ExternalNetwork [externalNetwork] * <--Protect--> 0..1 [firewall] Firewall
-    Computer [computer7] * <--Protect--> 0..1 [firewall8] Firewall
+    Computer [computer] * <--Protect--> 0..1 [firewall] Firewall
+    Server [server] * <--Protect--> 0..1 [firewall] Firewall
 
     Computer [computer] * <--Control--> * [c2Server] C2Server
 
