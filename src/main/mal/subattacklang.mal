@@ -166,17 +166,34 @@ category Software {
 
       & _windowsCommandShell @hidden
 
-      & adminCommandAndScriptingInterpreter
-          +> internalNetwork.remoteSystemsConnection // PowerShell
     }
+
     asset Linux extends OS {
+      | userRights
+          +> _appleScript,
+             _bashUser
+
+      | systemRights
+          +> _bashRoot
+
+      & commandAndScriptingInterpreter
+          +> _bashUser,
+             _bashRoot
+
+      & _bashUser @hidden
+          ->
+
+      & _bashRoot @hidden
+          ->
+
     }
 
     asset MacOS extends OS {
-      & userCommandAndScriptingInterpreter
-          +> infected,                               // AppleScript
-             internalNetwork.remoteAccessSoftware
-             //executeCode
+
+      | userRights
+          +> _appleScript,
+             _bashUser
+
       | systemRights
           +> _bashRoot
 
