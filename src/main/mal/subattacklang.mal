@@ -2,210 +2,207 @@
 #version: "1.0.0"
 
 category Person {
-    asset User {
-      & phishing
-        -> _spearphisingAttachment,
-           _spearphisingLink,
-           _spearphisingService
+  asset User {
+    & phishing
+      -> _spearphisingAttachment,
+         _spearphisingLink,
+         _spearphisingService
 
-        //attemptUserExecution
+      //attemptUserExecution
 
-      & _spearphisingAttachment @hidden
-          -> attemptUserExecution
+    & _spearphisingAttachment @hidden
+        -> attemptUserExecution
 
-      & _spearphisingLink @hidden
-          -> attemptUserExecution
+    & _spearphisingLink @hidden
+        -> attemptUserExecution
 
-      & _spearphisingService @hidden
-          -> attemptUserExecution
+    & _spearphisingService @hidden
+        -> attemptUserExecution
 
-      | attemptUserExecution
-        -> computer.os.attemptUserExecution
+    | attemptUserExecution
+      -> computer.os.attemptUserExecution
 
-      # userTraining
-        -> phishing,
-           attemptUserExecution
+    # userTraining
+      -> phishing,
+         attemptUserExecution
 
-    }
+  }
 
-    asset RemoteDesktopUser extends User {
+  asset RemoteDesktopUser extends User {
 
-    }
-
-    asset Administrator extends User{
-      }
-
-
-    asset SysAdmin extends Administrator{
-    }
-
-    asset Root extends Administrator{
-
-    }
+  }
 }
 
 
 category Software {
 
-    asset Service {
-    }
+  asset Service {
+  }
 
-    asset Credentials{
-      | access
-        -> compromise
+  asset Credentials{
+    | access
+      -> compromise
 
-      | compromise
+    | compromise
 
-      | accessWithPassword
-        -> compromise
-
-      # passwordProtected
-        -> access
-    }
-
-    asset PrivateKey extends Credentials{
+    | accessWithPassword
+      -> compromise
 
       | bruteForce
-        -> compromise
+        -> accessWithPassword
 
-      | compromise
-        +> account.accessWithPassword
-    }
+    # passwordProtected
+      -> access
+  }
 
-    asset Account extends Credentials{
-    }
+  asset Password extends Credentials{
+  }
+
+  asset PrivateKey extends Credentials{
+  }
+
+  asset Account {
+  }
+
+  asset UserAccount extends Account{}
+
+  asset AdminAccount extends Account{}
+
+  asset SystemAccount extends Account{}
+
+  asset RootAccount extends Account{}
 
 
-    asset Browser {
-    }
+  asset Browser {
+  }
 
-    asset OS {
+  asset OS {
 
-      & infected
+    & infected
 
-      | userRights
-          -> _python
+    | userRights
+        -> _python
 
-      | adminRights
-          -> userRights
+    | adminRights
+        -> userRights
 
-      | systemRights
-          -> adminRights
+    | systemRights
+        -> adminRights
 
-      | commandAndScriptingInterpreter
-          -> _python
+    | commandAndScriptingInterpreter
+        -> _python
 
-      & _python @hidden
-          ->
+    & _python @hidden
+        ->
 
-      | userExecution
-          -> userRights,
-             commandAndScriptingInterpreter
+    | userExecution
+        -> userRights,
+           commandAndScriptingInterpreter
 
-      | dataCollected
-          user info: "All techniques under exfiltration tactic"
+    | dataCollected
+        user info: "All techniques under exfiltration tactic"
 
-      # disableOrRemoveFeatureOrProgram
-          user info: "https://attack.mitre.org/techniques/T1064/"
-          -> commandAndScriptingInterpreter,
+    # disableOrRemoveFeatureOrProgram
+        user info: "https://attack.mitre.org/techniques/T1064/"
+        -> commandAndScriptingInterpreter,
 
-     # codeSigning
-         -> commandAndScriptingInterpreter,
+   # codeSigning
+       -> commandAndScriptingInterpreter,
 
-      # restrictWebBasedContent
-          -> computer.user.phishing,
-             attemptUserExecution
+    # restrictWebBasedContent
+        -> computer.user.phishing,
+           attemptUserExecution
 
-      # networkIntrusionPrevention
-        -> attemptUserExecution
+    # networkIntrusionPrevention
+      -> attemptUserExecution
 
-      # executionPrevention
-        -> attemptUserExecution,
-           commandAndScriptingInterpreter,
+    # executionPrevention
+      -> attemptUserExecution,
+         commandAndScriptingInterpreter,
 
-      # antivirus
-        -> attemptUserExecution
-    }
+    # antivirus
+      -> attemptUserExecution
+  }
 
-    asset Windows extends OS {
+  asset Windows extends OS {
 
-      | userRights
-          +> _powerShellUser,
-             _windowsCommandShell,
-             _VBScriptUser
+    | userRights
+        +> _powerShellUser,
+           _windowsCommandShell,
+           _VBScriptUser
 
-      | adminRights
-          +> _powerShellAdmin,
-             _VBScriptAdmin
+    | adminRights
+        +> _powerShellAdmin,
+           _VBScriptAdmin
 
-      | systemRights
-          +> _VBScriptSystem
+    | systemRights
+        +> _VBScriptSystem
 
-      | commandAndScriptingInterpreter
-          +> _powerShellUser,
-             _powerShellAdmin,
-             _windowsCommandShell,
-             _VBScriptUser,
-             _VBScriptAdmin,
-             _VBScriptSystem
+    | commandAndScriptingInterpreter
+        +> _powerShellUser,
+           _powerShellAdmin,
+           _windowsCommandShell,
+           _VBScriptUser,
+           _VBScriptAdmin,
+           _VBScriptSystem
 
-      & _powerShellUser @hidden
-          ->
+    & _powerShellUser @hidden
+        ->
 
-      & _powerShellAdmin @hidden
-          developer info: "Administrator permissions are required to use PowerShell to connect to remote systems."
-          -> internalNetwork.remoteSystemsConnection
+    & _powerShellAdmin @hidden
+        developer info: "Administrator permissions are required to use PowerShell to connect to remote systems."
+        -> internalNetwork.remoteSystemsConnection
 
-      & _VBScriptUser @hidden
+    & _VBScriptUser @hidden
 
-      & _VBScriptAdmin @hidden
+    & _VBScriptAdmin @hidden
 
-      & _VBScriptSystem @hidden
+    & _VBScriptSystem @hidden
 
-      & _windowsCommandShell @hidden
+    & _windowsCommandShell @hidden
 
-    }
+  }
 
-    asset Linux extends OS {
-      | userRights
-          +> _appleScript,
-             _bashUser
+  asset Linux extends OS {
+    | userRights
+        +> _appleScript,
+           _bashUser
 
-      | systemRights
-          +> _bashRoot
+    | systemRights
+        +> _bashRoot
 
-      | commandAndScriptingInterpreter
-          +> _bashUser,
-             _bashRoot
+    | commandAndScriptingInterpreter
+        +> _bashUser,
+           _bashRoot
 
-      & _bashUser @hidden
-          ->
+    & _bashUser @hidden
+        ->
 
-      & _bashRoot @hidden
-          ->
+    & _bashRoot @hidden
+        ->
 
-    }
+  }
 
-    asset MacOS extends OS {
+  asset MacOS extends OS {
 
-      | userRights
-          +> _appleScript,
-             _bashUser
+    | userRights
+        +> _appleScript,
+           _bashUser
 
-      | systemRights
-          +> _bashRoot
+    | systemRights
+        +> _bashRoot
 
-      & commandAndScriptingInterpreter
-          +> _appleScript,
-             _bashUser
-             _bashRoot
+    & commandAndScriptingInterpreter
+        +> _appleScript,
+           _bashUser
+           _bashRoot
 
-      & _appleScript @hidden
-          -> internalNetwork.remoteAccessSoftware
+    & _appleScript @hidden
+        -> internalNetwork.remoteAccessSoftware
 
-      & _bash @hidden
-          ->
-    }
+    & _bash @hidden
+        ->
+  }
 }
 
 category Network {
@@ -232,66 +229,89 @@ category Hardware {
     asset Computer {
     }
 
-    asset C2Server extends Computer{
+    asset PC extends Computer{
 
     }
 
-    asset server{
+    asset Server extends Computer{
 
     }
+
+    asset C2Server extends Server{
+
+    }
+
+
 
 }
 
 associations {
 
-    PrivateKey [privateKey] * <--Protects--> * [account] Account
+  Computer [computer] * <--connectsTo--> * [externalNetwork] ExternalNetwork
+  Computer [computer] * <--connectsTo--> * [internalNetwork] InternalNetwork
+  User [user] * <--uses--> * [computer] Computer
 
-    Account [account] * <--Access--> [server] 1..* [server] Server
+  OS [os] 1..* <--runs--> * [browser] Browser
+  OS [os] 1..* <--provides--> * [service] Service
+  OS [os] * <--contains--> * [credential] Credential
+  OS [os] 1..* <--ui--> 1..* [computer] Computer
+  Account [account] * <--access--> * [os] OS
+  Firewall [firewall] * <--protects--> * [os] OS
 
-    User [user] * <--Use--> * [computer] Computer
-
-    RemoteDesktopUser [windowsRemoteDestopUser] * <--Ui--> * [windows] Windows
-
-    Administrator [administrator] * <--Ui--> * [os] OS
-
-    Root [rootLinux] * <--Ui--> * [linux] Linux
-    Root [rootMac] * <--Ui--> * [macOS] MacOS
-
-    SysAdmin [sysAdmin] * <--Ui--> * [windows] Windows
-
-
-    Browser [browser] * <--Use--> * [service] Service
-    Browser [browser] * <--Connect--> * [internalNetwork] InternalNetwork
-    Browser [browser] * <--Connect--> * [externalNetwork] ExternalNetwork
-
-    OS [os] * <--Use--> * [service] Service
-    OS [os] 1 <--Use--> * [browser] Browser
-    OS [os] * <--System--> * [computer] Computer
+  User [user] * <--owns--> * [account] Account
+  Credential [credential] * <--unlocks--> [account] Account
+  Browser [browser] * <--access--> [externalNetwork] ExternalNetwork
 
 
-//    Windows [windows] * <--Contain--> * [service] Service
-//    Linux [linux4] * <--Contain--> * [service] Service
-//    MacOS [macOS4] * <--Contain--> * [service] Service
 
-//    Service [service8] * <--Contain--> * [thirdpartySoftware5] ThirdpartySoftware
-    Service [service] * <--Connect--> * [c2Server2] C2Server
-    Service [service] * <--Provide--> * [server] Server
-
-    InternalNetwork [internalNetwork] * <--Connect--> * [externalNetwork] ExternalNetwork
-    InternalNetwork [internalNetwork] * <--Connect--> * [computer] Computer
-    InternalNetwork [internalNetwork] * <--Use--> * [administrator] Administrator
-    InternalNetwork [internalNetwork] * <--Connect--> * [server] Server
-    ExternalNetwork [externalNetwork] * <--Connect--> * [computer] Computer
-    InternalNetwork [internalNetwork] * <--Contain--> * [service] Service
-    ExternalNetwork [externalNetwork] * <--Use--> * [administrator] Administrator
-    ExternalNetwork [externalNetwork] * <--Connect--> * [server] Server
-
-    InternalNetwork [internalNetwork] * <--Protect--> 0..1 [firewall] Firewall
-    ExternalNetwork [externalNetwork] * <--Protect--> 0..1 [firewall] Firewall
-    Computer [computer] * <--Protect--> 0..1 [firewall] Firewall
-    Server [server] * <--Protect--> 0..1 [firewall] Firewall
-
-    Computer [computer] * <--Control--> * [c2Server] C2Server
+    //PrivateKey [privateKey] * <--Protects--> * [account] Account
+//
+    //Account [account] * <--Access--> [server] 1..* [server] Server
+//
+    //User [user] * <--Use--> * [computer] Computer
+//
+    //RemoteDesktopUser [windowsRemoteDestopUser] * <--Ui--> * [windows] Windows
+//
+    //Administrator [administrator] * <--Ui--> * [os] OS
+//
+    //Root [rootLinux] * <--Ui--> * [linux] Linux
+    //Root [rootMac] * <--Ui--> * [macOS] MacOS
+//
+    //SysAdmin [sysAdmin] * <--Ui--> * [windows] Windows
+//
+//
+    //Browser [browser] * <--Use--> * [service] Service
+    //Browser [browser] * <--Connect--> * [internalNetwork] InternalNetwork
+    //Browser [browser] * <--Connect--> * [externalNetwork] ExternalNetwork
+//
+    //OS [os] * <--Use--> * [service] Service
+    //OS [os] 1 <--Use--> * [browser] Browser
+    //OS [os] * <--System--> * [computer] Computer
+//
+//
+////    Windows [windows] * <--Contain--> * [service] Service
+////    Linux [linux4] * <--Contain--> * [service] Service
+////    MacOS [macOS4] * <--Contain--> * [service] Service
+//
+////    Service [service8] * <--Contain--> * [thirdpartySoftware5] ThirdpartySoftware
+    //Service [service] * <--Connect--> * [c2Server2] C2Server
+    //Service [service] * <--Provide--> * [server] Server
+//
+    //InternalNetwork [internalNetwork] * <--Connect--> * [externalNetwork] ExternalNetwork
+    //InternalNetwork [internalNetwork] * <--Connect--> * [computer] Computer
+    //InternalNetwork [internalNetwork] * <--Use--> * [administrator] Administrator
+    //InternalNetwork [internalNetwork] * <--Connect--> * [server] Server
+    //ExternalNetwork [externalNetwork] * <--Connect--> * [computer] Computer
+    //InternalNetwork [internalNetwork] * <--Contain--> * [service] Service
+    //ExternalNetwork [externalNetwork] * <--Use--> * [administrator] Administrator
+    //ExternalNetwork [externalNetwork] * <--Connect--> * [server] Server
+//
+    //InternalNetwork [internalNetwork] * <--Protect--> 0..1 [firewall] Firewall
+    //ExternalNetwork [externalNetwork] * <--Protect--> 0..1 [firewall] Firewall
+    //Computer [computer] * <--Protect--> 0..1 [firewall] Firewall
+    //Server [server] * <--Protect--> 0..1 [firewall] Firewall
+//
+    //Computer [computer] * <--Control--> * [c2Server] C2Server
 
 
 }
