@@ -264,54 +264,54 @@ associations {
 
 
 
-    //PrivateKey [privateKey] * <--Protects--> * [account] Account
+//  PrivateKey [privateKey] * <--Protects--> * [account] Account
 //
-    //Account [account] * <--Access--> [server] 1..* [server] Server
+//  Account [account] * <--Access--> [server] 1..* [server] Server
 //
-    //User [user] * <--Use--> * [computer] Computer
+//  User [user] * <--Use--> * [computer] Computer
 //
-    //RemoteDesktopUser [windowsRemoteDestopUser] * <--Ui--> * [windows] Windows
+//  RemoteDesktopUser [windowsRemoteDestopUser] * <--Ui--> * [windows] Windows
 //
-    //Administrator [administrator] * <--Ui--> * [os] OS
+//  Administrator [administrator] * <--Ui--> * [os] OS
 //
-    //Root [rootLinux] * <--Ui--> * [linux] Linux
-    //Root [rootMac] * <--Ui--> * [macOS] MacOS
+//  Root [rootLinux] * <--Ui--> * [linux] Linux
+//  Root [rootMac] * <--Ui--> * [macOS] MacOS
 //
-    //SysAdmin [sysAdmin] * <--Ui--> * [windows] Windows
-//
-//
-    //Browser [browser] * <--Use--> * [service] Service
-    //Browser [browser] * <--Connect--> * [internalNetwork] InternalNetwork
-    //Browser [browser] * <--Connect--> * [externalNetwork] ExternalNetwork
-//
-    //OS [os] * <--Use--> * [service] Service
-    //OS [os] 1 <--Use--> * [browser] Browser
-    //OS [os] * <--System--> * [computer] Computer
+//  SysAdmin [sysAdmin] * <--Ui--> * [windows] Windows
 //
 //
-////    Windows [windows] * <--Contain--> * [service] Service
-////    Linux [linux4] * <--Contain--> * [service] Service
-////    MacOS [macOS4] * <--Contain--> * [service] Service
+//  Browser [browser] * <--Use--> * [service] Service
+//  Browser [browser] * <--Connect--> * [internalNetwork] InternalNetwork
+//  Browser [browser] * <--Connect--> * [externalNetwork] ExternalNetwork
 //
-////    Service [service8] * <--Contain--> * [thirdpartySoftware5] ThirdpartySoftware
-    //Service [service] * <--Connect--> * [c2Server2] C2Server
-    //Service [service] * <--Provide--> * [server] Server
+//  OS [os] * <--Use--> * [service] Service
+//  OS [os] 1 <--Use--> * [browser] Browser
+//  OS [os] * <--System--> * [computer] Computer
 //
-    //InternalNetwork [internalNetwork] * <--Connect--> * [externalNetwork] ExternalNetwork
-    //InternalNetwork [internalNetwork] * <--Connect--> * [computer] Computer
-    //InternalNetwork [internalNetwork] * <--Use--> * [administrator] Administrator
-    //InternalNetwork [internalNetwork] * <--Connect--> * [server] Server
-    //ExternalNetwork [externalNetwork] * <--Connect--> * [computer] Computer
-    //InternalNetwork [internalNetwork] * <--Contain--> * [service] Service
-    //ExternalNetwork [externalNetwork] * <--Use--> * [administrator] Administrator
-    //ExternalNetwork [externalNetwork] * <--Connect--> * [server] Server
 //
-    //InternalNetwork [internalNetwork] * <--Protect--> 0..1 [firewall] Firewall
-    //ExternalNetwork [externalNetwork] * <--Protect--> 0..1 [firewall] Firewall
-    //Computer [computer] * <--Protect--> 0..1 [firewall] Firewall
-    //Server [server] * <--Protect--> 0..1 [firewall] Firewall
+////  Windows [windows] * <--Contain--> * [service] Service
+////  Linux [linux4] * <--Contain--> * [service] Service
+////  MacOS [macOS4] * <--Contain--> * [service] Service
 //
-    //Computer [computer] * <--Control--> * [c2Server] C2Server
+////  Service [service8] * <--Contain--> * [thirdpartySoftware5] ThirdpartySoftware
+//  Service [service] * <--Connect--> * [c2Server2] C2Server
+//  Service [service] * <--Provide--> * [server] Server
+//
+//  InternalNetwork [internalNetwork] * <--Connect--> * [externalNetwork] ExternalNetwork
+//  InternalNetwork [internalNetwork] * <--Connect--> * [computer] Computer
+//  InternalNetwork [internalNetwork] * <--Use--> * [administrator] Administrator
+//  InternalNetwork [internalNetwork] * <--Connect--> * [server] Server
+//  ExternalNetwork [externalNetwork] * <--Connect--> * [computer] Computer
+//  InternalNetwork [internalNetwork] * <--Contain--> * [service] Service
+//  ExternalNetwork [externalNetwork] * <--Use--> * [administrator] Administrator
+//  ExternalNetwork [externalNetwork] * <--Connect--> * [server] Server
+//
+//  InternalNetwork [internalNetwork] * <--Protect--> 0..1 [firewall] Firewall
+//  ExternalNetwork [externalNetwork] * <--Protect--> 0..1 [firewall] Firewall
+//  Computer [computer] * <--Protect--> 0..1 [firewall] Firewall
+//  Server [server] * <--Protect--> 0..1 [firewall] Firewall
+//
+//  Computer [computer] * <--Control--> * [c2Server] C2Server
 
 
 }
