@@ -20,9 +20,9 @@ category Person {
         -> attemptUserExecution
 
     | attemptUserExecution
-      -> computer.os.attemptUserExecution
+      -> account.attemptUserExecution
 
-    # userTraining
+    # userTraining [Disabled]
       -> phishing,
          attemptUserExecution
 
@@ -62,9 +62,12 @@ category Software {
   }
 
   asset Account {
+    | attemptUserExecution
   }
 
-  asset UserAccount extends Account{}
+  asset UserAccount extends Account{
+    attemptUser
+  }
 
   asset AdminAccount extends Account{}
 
@@ -240,8 +243,6 @@ category Hardware {
     asset C2Server extends Server{
 
     }
-
-
 
 }
 
