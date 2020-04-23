@@ -192,7 +192,13 @@ category Software {
 
     & _VBScriptSystem @hidden
 
-    & _windowsCommandShell @hidden
+    & windowsCommandShell @hidden
+        -> _fileAndDirectoryDiscovery,
+
+    | _fileAndDirectoryDiscovery
+      -> fileAndDirectoryDiscovery
+
+    & fileAndDirectoryDiscovery
 
   }
 
