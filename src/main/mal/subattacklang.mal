@@ -20,7 +20,7 @@ category Person {
         -> attemptUserExecution
 
     | attemptUserExecution
-      -> account.attemptUserExecution
+      -> account.attemptUserExecution,
 
     # userTraining [Disabled]
       -> phishing,
@@ -36,7 +36,15 @@ category Person {
 
 category Software {
 
-  asset Service {
+  asset Application {
+
+    | exploitationForClientExecution
+
+  }
+
+  asset Service extends Application {
+
+
   }
 
   asset Credentials{
@@ -62,29 +70,45 @@ category Software {
   }
 
   asset Account {
+
     | attemptUserExecution
+        -> os.userExecution
+
   }
 
   asset UserAccount extends Account{
-    attemptUser
+
+    | attemptUserExecution
+        +> os.userRights
+
   }
 
-  asset AdminAccount extends Account{}
+  asset AdminAccount extends Account {
 
-  asset SystemAccount extends Account{}
+    | attemptUserExecution
+        +> os.adminRights
 
+  }
+
+  asset SystemAccount extends Account {
+
+    | attemptUserExecution
+        +> os.systemRights
+
+  }
   asset RootAccount extends Account{}
 
 
-  asset Browser {
+  asset Browser extends Application{
+
   }
 
   asset OS {
 
-    & infected
-
     | userRights
-        -> _python
+        -> _python,
+           _maliciousFile,
+           _maliciousLink
 
     | adminRights
         -> userRights
@@ -99,8 +123,14 @@ category Software {
         ->
 
     | userExecution
-        -> userRights,
-           commandAndScriptingInterpreter
+        -> _maliciousLink,
+           _maliciousFile
+
+    & _maliciousFile @hidden
+        -> commandAndScriptingInterpreter
+
+    & _maliciousLink @hidden
+        -> application.exploitationForClientExecution
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
@@ -252,8 +282,7 @@ associations {
   Computer [computer] * <--connectsTo--> * [internalNetwork] InternalNetwork
   User [user] * <--uses--> * [computer] Computer
 
-  OS [os] 1..* <--runs--> * [browser] Browser
-  OS [os] 1..* <--provides--> * [service] Service
+  OS [os] 1..* <--provides--> * [application] Application
   OS [os] * <--contains--> * [credential] Credential
   OS [os] 1..* <--ui--> 1..* [computer] Computer
   Account [account] * <--access--> * [os] OS
@@ -261,7 +290,7 @@ associations {
 
   User [user] * <--owns--> * [account] Account
   Credential [credential] * <--unlocks--> [account] Account
-  Browser [browser] * <--access--> [externalNetwork] ExternalNetwork
+  Application [application] * <--access--> [externalNetwork] ExternalNetwork
 
 
 
