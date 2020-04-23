@@ -4,19 +4,17 @@
 category Person {
   asset User {
     & phishing
-      -> _spearphisingAttachment,
-         _spearphisingLink,
-         _spearphisingService
+      -> spearphisingAttachment,
+         spearphisingLink,
+         spearphisingService
 
-      //attemptUserExecution
-
-    & _spearphisingAttachment @hidden
+    & spearphisingAttachment @hidden
         -> attemptUserExecution
 
-    & _spearphisingLink @hidden
+    & spearphisingLink @hidden
         -> attemptUserExecution
 
-    & _spearphisingService @hidden
+    & spearphisingService @hidden
         -> attemptUserExecution
 
     | attemptUserExecution
@@ -33,7 +31,6 @@ category Person {
   }
 }
 
-
 category Software {
 
   asset Application {
@@ -43,7 +40,6 @@ category Software {
   }
 
   asset Service extends Application {
-
 
   }
 
@@ -96,7 +92,9 @@ category Software {
         +> os.systemRights
 
   }
-  asset RootAccount extends Account{}
+  asset RootAccount extends Account{
+  +> os.root
+  }
 
 
   asset Browser extends Application{
@@ -106,9 +104,9 @@ category Software {
   asset OS {
 
     | userRights
-        -> _python,
-           _maliciousFile,
-           _maliciousLink
+        -> python,
+           maliciousFile,
+           maliciousLink
 
     | adminRights
         -> userRights
@@ -117,20 +115,28 @@ category Software {
         -> adminRights
 
     | commandAndScriptingInterpreter
-        -> _python
+        -> python
 
-    & _python @hidden
-        ->
+    | _python
+      -> python
+
+    & python @hidden
 
     | userExecution
-        -> _maliciousLink,
-           _maliciousFile
+      -> _maliciousLink,
+         _maliciousFile
 
-    & _maliciousFile @hidden
-        -> commandAndScriptingInterpreter
+    | _maliciousFile @hidden
+      -> maliciousFile
 
-    & _maliciousLink @hidden
-        -> application.exploitationForClientExecution
+    & maliciousFile @hidden
+        -> _commandAndScriptingInterpreter
+
+    | _maliciousLink @hidden
+      -> maliciousLink
+
+    & maliciousLink @hidden
+        -> application._exploitationForClientExecution
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
@@ -143,7 +149,7 @@ category Software {
        -> commandAndScriptingInterpreter,
 
     # restrictWebBasedContent
-        -> computer.user.phishing,
+        -> maliciousLink,
            attemptUserExecution
 
     # networkIntrusionPrevention
@@ -151,7 +157,7 @@ category Software {
 
     # executionPrevention
       -> attemptUserExecution,
-         commandAndScriptingInterpreter,
+         commandAndScriptingInterpreter
 
     # antivirus
       -> attemptUserExecution
@@ -160,88 +166,72 @@ category Software {
   asset Windows extends OS {
 
     | userRights
-        +> _powerShellUser,
-           _windowsCommandShell,
-           _VBScriptUser
+        +> powerShell,
+           windowsCommandShell,
+           VBScript
 
     | adminRights
-        +> _powerShellAdmin,
-           _VBScriptAdmin
 
     | systemRights
-        +> _VBScriptSystem
 
     | commandAndScriptingInterpreter
-        +> _powerShellUser,
-           _powerShellAdmin,
            _windowsCommandShell,
-           _VBScriptUser,
-           _VBScriptAdmin,
-           _VBScriptSystem
+           _VBScript,
+           _powerShell
 
-    & _powerShellUser @hidden
-        ->
+    | _powerShell @hidden
+        ->powerShell
 
-    & _powerShellAdmin @hidden
-        developer info: "Administrator permissions are required to use PowerShell to connect to remote systems."
-        -> internalNetwork.remoteSystemsConnection
+    & powerShell @hidden
 
-    & _VBScriptUser @hidden
+    | _VBScript @hidden
+      -> VBScript
 
-    & _VBScriptAdmin @hidden
+    & VBScript @hidden
 
-    & _VBScriptSystem @hidden
+    | _windowsCommandShell @hidden
+      -> windowsCommandShell
 
     & windowsCommandShell @hidden
-        -> _fileAndDirectoryDiscovery,
-
-
-    | _fileAndDirectoryDiscovery
-      -> fileAndDirectoryDiscovery
-
-    & fileAndDirectoryDiscovery
 
   }
 
   asset Linux extends OS {
     | userRights
-        +> _appleScript,
-           _bashUser
+        +> bash
 
     | systemRights
-        +> _bashRoot
 
     | commandAndScriptingInterpreter
-        +> _bashUser,
-           _bashRoot
 
-    & _bashUser @hidden
-        ->
+    | bash @hidden
+      -> bash
 
-    & _bashRoot @hidden
-        ->
+    & bash @hidden
 
   }
 
   asset MacOS extends OS {
 
     | userRights
-        +> _appleScript,
-           _bashUser
+        +> appleScript,
+           bash
 
     | systemRights
-        +> _bashRoot
 
     & commandAndScriptingInterpreter
         +> _appleScript,
-           _bashUser
-           _bashRoot
+           _bash
 
-    & _appleScript @hidden
-        -> internalNetwork.remoteAccessSoftware
+    |_appleScript
+      -> appleScript
 
-    & _bash @hidden
-        ->
+    & appleScript @hidden
+        //-> internalNetwork.remoteAccessSoftware
+
+    | _bash @hidden
+        -> bash
+    & bash @hidden
   }
 }
 
