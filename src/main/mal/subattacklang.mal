@@ -58,6 +58,17 @@ category Software {
 
   }
 
+  asset Browser extends Application {
+
+    | _browserExtensions @hidden
+      -> browserExtensions
+
+    & browserExtensions
+      -> credentials.compromise,
+         os.persistence
+
+  }
+
   asset Credentials{
     | access
       -> compromise
@@ -122,13 +133,19 @@ category Software {
     | userRights
         -> python,
            maliciousFile,
-           maliciousLink
+           maliciousLink,
+           commandAndScriptingInterpreter,
+
+           // Underscore attacks
+           _commandAndScriptingInterpreter
 
     | adminRights
         -> userRights
 
     | systemRights
       -> adminRights
+
+    | persistence
 
     | _commandAndScriptingInterpreter @hidden
       -> commandAndScriptingInterpreter
