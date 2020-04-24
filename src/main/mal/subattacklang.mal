@@ -39,11 +39,6 @@ category Software {
       -> exploitationForClientExecution
 
     | exploitationForClientExecution
-      ->
-
-  }
-
-  asset Browser extends Application{
 
     | supplyChainCompromise
       -> compromiseSoftwareDependenciesAndDevelopmentTools,
@@ -52,7 +47,7 @@ category Software {
       | compromiseSoftwareDependenciesAndDevelopmentTools @hidden
         -> os._maliciousFile
 
-      < compromiseSoftwareSupplyChain @hidden
+      | compromiseSoftwareSupplyChain @hidden
         -> os._maliciousFile
 
   }
@@ -64,6 +59,9 @@ category Software {
   }
 
   asset Browser extends Application {
+
+    supplyChainCompromise
+      +> _browserExtensions
 
     | _browserExtensions @hidden
       -> browserExtensions
@@ -147,24 +145,16 @@ category Software {
     | systemRights
       -> adminRights
 
-<<<<<<< HEAD
-=======
     | persistence
 
->>>>>>> e147a67b5c9c1bdab73381eabd32dcf6cead0caf
     | _commandAndScriptingInterpreter @hidden
       -> commandAndScriptingInterpreter
 
     & commandAndScriptingInterpreter
       -> python
 
-<<<<<<< HEAD
     | _python @hidden
       -> python
-=======
-        | _python @hidden
-          -> python
->>>>>>> e147a67b5c9c1bdab73381eabd32dcf6cead0caf
 
         & python @hidden
 
@@ -172,7 +162,6 @@ category Software {
       -> _maliciousLink,
          _maliciousFile
 
-<<<<<<< HEAD
       | _maliciousFile @hidden
         -> maliciousFile
 
@@ -187,19 +176,6 @@ category Software {
       & maliciousLink @hidden
         -> application._exploitationForClientExecution,
         userRights
-=======
-         | _maliciousFile @hidden
-           -> maliciousFile
-
-         & maliciousFile @hidden
-           -> _commandAndScriptingInterpreter
-
-         | _maliciousLink @hidden
-           -> maliciousLink
-
-         & maliciousLink @hidden
-           -> application._exploitationForClientExecution
->>>>>>> e147a67b5c9c1bdab73381eabd32dcf6cead0caf
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
