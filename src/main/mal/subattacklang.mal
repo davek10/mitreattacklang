@@ -18,7 +18,7 @@ category Person {
         -> attemptUserExecution
 
     | attemptUserExecution
-      -> account.attemptUserExecution,
+      -> account.attemptUserExecution
 
     # userTraining [Disabled]
       -> phishing,
@@ -34,6 +34,9 @@ category Person {
 category Software {
 
   asset Application {
+
+    | _exploitationForClientExecution
+      -> exploitationForClientExecution
 
     | exploitationForClientExecution
 
@@ -92,8 +95,9 @@ category Software {
         +> os.systemRights
 
   }
-  asset RootAccount extends Account{
-  +> os.root
+  asset RootAccount extends Account {
+    | attemptUserExecution
+      +> os.systemRights
   }
 
 
@@ -112,10 +116,13 @@ category Software {
         -> userRights
 
     | systemRights
-        -> adminRights
+      -> adminRights
 
-    | commandAndScriptingInterpreter
-        -> python
+    | _commandAndScriptingInterpreter
+      -> commandAndScriptingInterpreter
+
+    & commandAndScriptingInterpreter
+      -> python
 
     | _python
       -> python
@@ -143,44 +150,45 @@ category Software {
 
     # disableOrRemoveFeatureOrProgram
         user info: "https://attack.mitre.org/techniques/T1064/"
-        -> commandAndScriptingInterpreter,
+        -> commandAndScriptingInterpreter
 
-   # codeSigning
-       -> commandAndScriptingInterpreter,
+    # codeSigning
+       -> commandAndScriptingInterpreter
 
     # restrictWebBasedContent
         -> maliciousLink,
-           attemptUserExecution
+        account.attemptUserExecution
+
 
     # networkIntrusionPrevention
-      -> attemptUserExecution
+      -> account.attemptUserExecution
 
     # executionPrevention
-      -> attemptUserExecution,
+      -> account.attemptUserExecution,
          commandAndScriptingInterpreter
 
     # antivirus
-      -> attemptUserExecution
+      -> account.attemptUserExecution
   }
 
   asset Windows extends OS {
 
     | userRights
-        +> powerShell,
-           windowsCommandShell,
-           VBScript
+      +> powerShell,
+         windowsCommandShell,
+         VBScript
 
     | adminRights
 
     | systemRights
 
-    | commandAndScriptingInterpreter
-           _windowsCommandShell,
-           _VBScript,
-           _powerShell
+    & commandAndScriptingInterpreter
+      +> _windowsCommandShell,
+         _VBScript,
+         _powerShell
 
     | _powerShell @hidden
-        ->powerShell
+      ->powerShell
 
     & powerShell @hidden
 
@@ -202,9 +210,10 @@ category Software {
 
     | systemRights
 
-    | commandAndScriptingInterpreter
+    & commandAndScriptingInterpreter
+      +> _bash
 
-    | bash @hidden
+    | _bash @hidden
       -> bash
 
     & bash @hidden
@@ -214,23 +223,24 @@ category Software {
   asset MacOS extends OS {
 
     | userRights
-        +> appleScript,
-           bash
+      +> appleScript,
+         bash
 
     | systemRights
 
     & commandAndScriptingInterpreter
-        +> _appleScript,
-           _bash
+      +> _appleScript,
+         _bash
 
     |_appleScript
       -> appleScript
 
     & appleScript @hidden
-        //-> internalNetwork.remoteAccessSoftware
+      //-> internalNetwork.remoteAccessSoftware
 
     | _bash @hidden
-        -> bash
+      -> bash
+
     & bash @hidden
   }
 }
@@ -241,11 +251,11 @@ category Network {
     & remoteAccessSoftware
 
     | remoteSystemsConnection
-        -> dataFromNetworkSharedDrive
+      -> dataFromNetworkSharedDrive
 
     & dataFromNetworkSharedDrive
-        -> dataCollected,
-           //sensitiveDataCollected
+      -> computer.os.dataCollected
+      //sensitiveDataCollected
   }
 
   asset ExternalNetwork {
@@ -280,14 +290,14 @@ associations {
   User [user] * <--uses--> * [computer] Computer
 
   OS [os] 1..* <--provides--> * [application] Application
-  OS [os] * <--contains--> * [credential] Credential
+  OS [os] * <--contains--> * [credentials] Credentials
   OS [os] 1..* <--ui--> 1..* [computer] Computer
   Account [account] * <--access--> * [os] OS
   Firewall [firewall] * <--protects--> * [os] OS
 
   User [user] * <--owns--> * [account] Account
-  Credential [credential] * <--unlocks--> [account] Account
-  Application [application] * <--access--> [externalNetwork] ExternalNetwork
+  Credentials [credentials] * <--unlocks--> * [account] Account
+  Application [application] * <--access--> * [externalNetwork] ExternalNetwork
 
 
 
