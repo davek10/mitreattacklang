@@ -3,18 +3,18 @@
 
 category Person {
   asset User {
-    & phishing
+    | phishing
       -> spearphisingAttachment,
          spearphisingLink,
          spearphisingService
 
-    & spearphisingAttachment @hidden
+    | spearphisingAttachment @hidden
         -> attemptUserExecution
 
-    & spearphisingLink @hidden
+    | spearphisingLink @hidden
         -> attemptUserExecution
 
-    & spearphisingService @hidden
+    | spearphisingService @hidden
         -> attemptUserExecution
 
     | attemptUserExecution
@@ -39,6 +39,11 @@ category Software {
       -> exploitationForClientExecution
 
     | exploitationForClientExecution
+      ->
+
+  }
+
+  asset Browser extends Application{
 
   }
 
@@ -51,6 +56,7 @@ category Software {
       -> compromise
 
     | compromise
+      -> account.os.userRight
 
     | accessWithPassword
       -> compromise
@@ -101,10 +107,6 @@ category Software {
   }
 
 
-  asset Browser extends Application{
-
-  }
-
   asset OS {
 
     | userRights
@@ -118,13 +120,13 @@ category Software {
     | systemRights
       -> adminRights
 
-    | _commandAndScriptingInterpreter
+    | _commandAndScriptingInterpreter @hidden
       -> commandAndScriptingInterpreter
 
     & commandAndScriptingInterpreter
       -> python
 
-    | _python
+    | _python @hidden
       -> python
 
     & python @hidden
@@ -133,20 +135,30 @@ category Software {
       -> _maliciousLink,
          _maliciousFile
 
-    | _maliciousFile @hidden
-      -> maliciousFile
+      | _maliciousFile @hidden
+        -> maliciousFile
 
-    & maliciousFile @hidden
-        -> _commandAndScriptingInterpreter
+      & maliciousFile @hidden
+        -> _commandAndScriptingInterpreter,
+        userRights
 
-    | _maliciousLink @hidden
-      -> maliciousLink
 
-    & maliciousLink @hidden
-        -> application._exploitationForClientExecution
+      | _maliciousLink @hidden
+        -> maliciousLink
+
+      & maliciousLink @hidden
+        -> application._exploitationForClientExecution,
+        userRights
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
+
+
+    | _exploitationForPrivilegeEscalation @hidden
+      -> exploitationForPrivilegeEscalation
+
+    & exploitationForPrivilegeEscalation
+      -> systemRights
 
     # disableOrRemoveFeatureOrProgram
         user info: "https://attack.mitre.org/techniques/T1064/"
@@ -169,6 +181,19 @@ category Software {
 
     # antivirus
       -> account.attemptUserExecution
+
+    # applicationIsolationAndSandboxing
+      -> exploitationForPrivilegeEscalation
+
+    # exploitProtection
+      -> exploitationForPrivilegeEscalation
+
+    # threatIntelligenceProgram
+      -> exploitationForPrivilegeEscalation
+
+    #updateSoftware
+      -> exploitationForPrivilegeEscalation,
+      application.supplyChainCompromise
   }
 
   asset Windows extends OS {
@@ -201,7 +226,6 @@ category Software {
       -> windowsCommandShell
 
     & windowsCommandShell @hidden
-
   }
 
   asset Linux extends OS {
@@ -298,6 +322,7 @@ associations {
   User [user] * <--owns--> * [account] Account
   Credentials [credentials] * <--unlocks--> * [account] Account
   Application [application] * <--access--> * [externalNetwork] ExternalNetwork
+  Credentials [credentials] * <--authenticate--> * [application] Application
 
 
 
