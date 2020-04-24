@@ -35,14 +35,26 @@ category Software {
 
   asset Application {
 
-    | _exploitationForClientExecution
+    | _exploitationForClientExecution @hidden
       -> exploitationForClientExecution
 
     | exploitationForClientExecution
 
+    | supplyChainCompromise
+      -> compromiseSoftwareDependenciesAndDevelopmentTools,
+         compromiseSoftwareSupplyChain
+
+      | compromiseSoftwareDependenciesAndDevelopmentTools @hidden
+        -> os._maliciousFile
+
+      < compromiseSoftwareSupplyChain @hidden
+        -> os._maliciousFile
+
   }
 
   asset Service extends Application {
+
+
 
   }
 
@@ -118,32 +130,32 @@ category Software {
     | systemRights
       -> adminRights
 
-    | _commandAndScriptingInterpreter
+    | _commandAndScriptingInterpreter @hidden
       -> commandAndScriptingInterpreter
 
     & commandAndScriptingInterpreter
       -> python
 
-    | _python
-      -> python
+        | _python @hidden
+          -> python
 
-    & python @hidden
+        & python @hidden
 
     | userExecution
       -> _maliciousLink,
          _maliciousFile
 
-    | _maliciousFile @hidden
-      -> maliciousFile
+         | _maliciousFile @hidden
+           -> maliciousFile
 
-    & maliciousFile @hidden
-        -> _commandAndScriptingInterpreter
+         & maliciousFile @hidden
+           -> _commandAndScriptingInterpreter
 
-    | _maliciousLink @hidden
-      -> maliciousLink
+         | _maliciousLink @hidden
+           -> maliciousLink
 
-    & maliciousLink @hidden
-        -> application._exploitationForClientExecution
+         & maliciousLink @hidden
+           -> application._exploitationForClientExecution
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
@@ -267,6 +279,13 @@ category Network {
 
 category Hardware {
     asset Computer {
+
+    | supplyChainCompromise
+      -> compromiseHardwareSupplyChain
+
+      | compromiseHardwareSupplyChain @hidden
+        -> os.systemRights
+
     }
 
     asset PC extends Computer{
