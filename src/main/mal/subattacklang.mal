@@ -35,7 +35,7 @@ category Software {
 
   asset Application {
 
-    | _exploitationForClientExecution
+    | _exploitationForClientExecution @hidden
       -> exploitationForClientExecution
 
     | exploitationForClientExecution
@@ -45,9 +45,32 @@ category Software {
 
   asset Browser extends Application{
 
+    | supplyChainCompromise
+      -> compromiseSoftwareDependenciesAndDevelopmentTools,
+         compromiseSoftwareSupplyChain
+
+      | compromiseSoftwareDependenciesAndDevelopmentTools @hidden
+        -> os._maliciousFile
+
+      < compromiseSoftwareSupplyChain @hidden
+        -> os._maliciousFile
+
   }
 
   asset Service extends Application {
+
+
+
+  }
+
+  asset Browser extends Application {
+
+    | _browserExtensions @hidden
+      -> browserExtensions
+
+    & browserExtensions
+      -> credentials.compromise,
+         os.persistence
 
   }
 
@@ -112,7 +135,11 @@ category Software {
     | userRights
         -> python,
            maliciousFile,
-           maliciousLink
+           maliciousLink,
+           commandAndScriptingInterpreter,
+
+           // Underscore attacks
+           _commandAndScriptingInterpreter
 
     | adminRights
         -> userRights
@@ -120,21 +147,32 @@ category Software {
     | systemRights
       -> adminRights
 
+<<<<<<< HEAD
+=======
+    | persistence
+
+>>>>>>> e147a67b5c9c1bdab73381eabd32dcf6cead0caf
     | _commandAndScriptingInterpreter @hidden
       -> commandAndScriptingInterpreter
 
     & commandAndScriptingInterpreter
       -> python
 
+<<<<<<< HEAD
     | _python @hidden
       -> python
+=======
+        | _python @hidden
+          -> python
+>>>>>>> e147a67b5c9c1bdab73381eabd32dcf6cead0caf
 
-    & python @hidden
+        & python @hidden
 
     | userExecution
       -> _maliciousLink,
          _maliciousFile
 
+<<<<<<< HEAD
       | _maliciousFile @hidden
         -> maliciousFile
 
@@ -149,6 +187,19 @@ category Software {
       & maliciousLink @hidden
         -> application._exploitationForClientExecution,
         userRights
+=======
+         | _maliciousFile @hidden
+           -> maliciousFile
+
+         & maliciousFile @hidden
+           -> _commandAndScriptingInterpreter
+
+         | _maliciousLink @hidden
+           -> maliciousLink
+
+         & maliciousLink @hidden
+           -> application._exploitationForClientExecution
+>>>>>>> e147a67b5c9c1bdab73381eabd32dcf6cead0caf
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
@@ -291,6 +342,13 @@ category Network {
 
 category Hardware {
     asset Computer {
+
+    | supplyChainCompromise
+      -> compromiseHardwareSupplyChain
+
+      | compromiseHardwareSupplyChain @hidden
+        -> os.systemRights
+
     }
 
     asset PC extends Computer{
