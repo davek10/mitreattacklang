@@ -60,7 +60,7 @@ category Software {
 
   asset Browser extends Application {
 
-    supplyChainCompromise
+    | supplyChainCompromise
       +> _browserExtensions
 
     | _browserExtensions @hidden
@@ -77,7 +77,7 @@ category Software {
       -> compromise
 
     | compromise
-      -> account.os.userRight
+      -> account.os.userRights
 
     | accessWithPassword
       -> compromise
