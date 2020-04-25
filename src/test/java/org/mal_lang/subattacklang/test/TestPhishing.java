@@ -31,7 +31,7 @@ public class TestPhishing{
         attacker.attack();
 
         //create assertions
-        os1.userRights.assertUncompromised();
+        os1.userRights.assertCompromisedInstantaneously();
     }
 
   @AfterEach

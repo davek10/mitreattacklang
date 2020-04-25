@@ -42,7 +42,9 @@ category Software {
 
     | supplyChainCompromise
       -> compromiseSoftwareDependenciesAndDevelopmentTools,
-         compromiseSoftwareSupplyChain
+         compromiseSoftwareSupplyChain,
+         os.userRights
+
 
       | compromiseSoftwareDependenciesAndDevelopmentTools @hidden
         -> os._maliciousFile
@@ -85,7 +87,7 @@ category Software {
       | bruteForce
         -> accessWithPassword
 
-    # passwordProtected
+    # passwordProtected [Disabled]
       -> access
   }
 
@@ -106,6 +108,7 @@ category Software {
 
     | attemptUserExecution
         +> os.userRights
+
 
   }
 
@@ -135,6 +138,7 @@ category Software {
            maliciousFile,
            maliciousLink,
            commandAndScriptingInterpreter,
+           //exploitationForPrivilegeEscalation,
 
            // Underscore attacks
            _commandAndScriptingInterpreter
@@ -151,7 +155,8 @@ category Software {
       -> commandAndScriptingInterpreter
 
     & commandAndScriptingInterpreter
-      -> python
+      -> _python,
+         _exploitationForPrivilegeEscalation
 
     | _python @hidden
       -> python
@@ -160,22 +165,21 @@ category Software {
 
     | userExecution
       -> _maliciousLink,
-         _maliciousFile
+         _maliciousFile,
+         userRights
 
       | _maliciousFile @hidden
         -> maliciousFile
 
       & maliciousFile @hidden
-        -> _commandAndScriptingInterpreter,
-        userRights
+        -> _commandAndScriptingInterpreter
 
 
       | _maliciousLink @hidden
         -> maliciousLink
 
       & maliciousLink @hidden
-        -> application._exploitationForClientExecution,
-        userRights
+        -> application._exploitationForClientExecution
 
     | dataCollected
         user info: "All techniques under exfiltration tactic"
