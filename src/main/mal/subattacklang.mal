@@ -323,6 +323,52 @@ category Software {
       -> windowsCommandShell
 
     & windowsCommandShell @hidden
+
+    | accessTokenManipulation
+      -> _tokenImpersonation,
+         _createProcessWithToken,
+         _makeAndImpersonateToken,
+         _parentPIDSpoofing,
+         _sIDHistoryInjection
+
+    | _tokenImpersonation @hidden
+      -> tokenImpersonation
+
+    & tokenImpersonation @hidden
+      developer info: "There was a exploit(CVE-2015-1701 Exploit) in windows that led the attacker to also get system rights as well, this exploit is now fixed"
+      -> adminRights,
+         systemRights
+
+    | _createProcessWithToken @hidden
+      -> createProcessWithToken
+
+    & createProcessWithToken @hidden
+
+    | _makeAndImpersonateToken @hidden
+      -> makeAndImpersonateToken
+
+    & makeAndImpersonateToken @hidden
+
+    | _parentPIDSpoofing @hidden
+      -> parentPIDSpoofing
+
+    & parentPIDSpoofing @hidden
+
+    | _sIDHistoryInjection @hidden
+      -> sIDHistoryInjection
+
+    & sIDHistoryInjection @hidden
+
+    # userAccountManagement
+      -> tokenImpersonation,
+         createProcessWithToken,
+         makeAndImpersonateToken
+
+    # privilegedAccountManagement
+      -> tokenImpersonation,
+         createProcessWithToken,
+         makeAndImpersonateToken
+
   }
 
   asset Linux extends OS {
