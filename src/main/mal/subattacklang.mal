@@ -79,7 +79,7 @@ category Software {
       -> compromise
 
     | compromise
-      -> account.os.userRights
+      -> account.validAccounts
 
     | accessWithPassword
       -> compromise
@@ -102,6 +102,35 @@ category Software {
     | attemptUserExecution
         -> os.userExecution
 
+    | validAccounts
+      -> _defaultAccounts,
+         _domainAccounts,
+         _localAccounts,
+         _cloudAccounts
+
+    | _defaultAccounts @hidden
+      -> defaultAccounts
+
+    & defaultAccounts @hidden
+      -> os.remoteServices
+
+    | _domainAccounts @hidden
+      -> domainAccounts
+
+    & domainAccounts @hidden
+
+    | _localAccounts @hidden
+      -> localAccounts
+
+    & localAccounts @hidden
+      ->
+
+    | _cloudAccounts @hidden
+      -> cloudAccounts
+
+    & cloudAccounts @hidden
+      ->
+
   }
 
   asset UserAccount extends Account{
@@ -109,20 +138,29 @@ category Software {
     | attemptUserExecution
         +> os.userRights
 
+    & defaultAccounts @hidden
+      +> os.userRights
+
 
   }
 
   asset AdminAccount extends Account {
 
     | attemptUserExecution
-        +> os.adminRights
+      +> os.adminRights
+
+    & defaultAccounts @hidden
+      +> os.adminRights
 
   }
 
   asset SystemAccount extends Account {
 
     | attemptUserExecution
-        +> os.systemRights
+      +> os.systemRights
+
+    & defaultAccounts @hidden
+      +> os.systemRights
 
   }
   asset RootAccount extends Account {
