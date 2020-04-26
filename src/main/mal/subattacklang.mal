@@ -56,8 +56,6 @@ category Software {
 
   asset Service extends Application {
 
-
-
   }
 
   asset Browser extends Application {
@@ -79,7 +77,7 @@ category Software {
       -> compromise
 
     | compromise
-      -> account.os.userRights
+      -> account.validAccounts
 
     | accessWithPassword
       -> compromise
@@ -119,7 +117,7 @@ category Software {
 
   }
 
-  asset SystemAccount extends Account {
+  asset SystemAdminAccount extends Account {
 
     | attemptUserExecution
         +> os.systemRights
@@ -144,10 +142,14 @@ category Software {
            _commandAndScriptingInterpreter
 
     | adminRights
-        -> userRights
+        -> userRights,
+           shutdown
 
     | systemRights
-      -> adminRights
+      -> adminRights,
+         bootkit,
+         systemFirmware,
+         componentFirmware
 
     | persistence
 
@@ -190,6 +192,32 @@ category Software {
 
     & exploitationForPrivilegeEscalation
       -> systemRights
+
+    | _shutdown @hidden
+      -> shutdown
+
+    & shutdown
+
+    | preOsBoot
+      -> persistance
+
+    | _systemFirmware @hidden
+      -> systemFirmware
+
+    & systemFirmware @hidden
+      -> preOsBoot
+
+    | _componentFirmware @hidden
+      -> componentFirmware
+
+    & componentFirmware @hidden
+      -> preOsBoot
+
+    | _bootkit @hidden
+      -> bootkit
+
+    & bootkit @hidden
+      -> preOsBoot
 
     # disableOrRemoveFeatureOrProgram
         user info: "https://attack.mitre.org/techniques/T1064/"
