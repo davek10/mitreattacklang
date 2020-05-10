@@ -3,27 +3,13 @@
 
 category Person {
   asset User {
-    | phishing
-      -> spearphisingAttachment,
-         spearphisingLink,
-         spearphisingService
-
-    | spearphisingAttachment @hidden
-        -> attemptUserExecution
-
-    | spearphisingLink @hidden
-        -> attemptUserExecution
-
-    | spearphisingService @hidden
-        -> attemptUserExecution
-
-    | attemptUserExecution
+    | userExecution
       -> account.attemptUserExecution
-
+/*
     # userTraining [Disabled]
       -> phishing,
-         attemptUserExecution
-
+         userExecution
+*/
   }
 
   asset RemoteDesktopUser extends User {
@@ -34,6 +20,20 @@ category Person {
 category Software {
 
   asset Application {
+
+  | phishing
+    -> spearphisingAttachment,
+       spearphisingLink,
+       spearphisingService
+
+  | spearphisingAttachment @hidden
+      -> os.account.user.userExecution
+
+  | spearphisingLink @hidden
+      -> os.account.user.userExecution
+
+  | spearphisingService @hidden
+      -> os.account.user.userExecution
 
     | _exploitationForClientExecution @hidden
       -> exploitationForClientExecution
@@ -77,7 +77,6 @@ category Software {
       -> compromise
 
     | compromise
-      -> account.validAccounts
 
     | accessWithPassword
       -> compromise
@@ -90,27 +89,36 @@ category Software {
   }
 
   asset Password extends Credentials{
+    |compromise
+      +> account.validAccounts
   }
 
   asset PrivateKey extends Credentials{
+    |compromise
+      +> account.validAccounts
+  }
+
+  asset Data extends Credentials {
+
   }
 
   asset Account {
 
-    | attemptUserExecution
+    | attemptUserExecution @hidden
         -> os.userExecution
 
     | validAccounts
       -> _defaultAccounts,
          _domainAccounts,
          _localAccounts,
-         _cloudAccounts
+         _cloudAccounts,
+         os.validAccounts
 
     | _defaultAccounts @hidden
       -> defaultAccounts
 
     & defaultAccounts @hidden
-      -> os.remoteServices
+      //-> os.remoteServices
 
     | _domainAccounts @hidden
       -> domainAccounts
@@ -121,19 +129,19 @@ category Software {
       -> localAccounts
 
     & localAccounts @hidden
-      ->
+
 
     | _cloudAccounts @hidden
       -> cloudAccounts
 
     & cloudAccounts @hidden
-      ->
+
 
   }
 
   asset UserAccount extends Account{
 
-    | attemptUserExecution
+    | attemptUserExecution  @hidden
         +> os.userRights
 
     & defaultAccounts @hidden
@@ -144,7 +152,7 @@ category Software {
 
   asset AdminAccount extends Account {
 
-    | attemptUserExecution
+    | attemptUserExecution @hidden
       +> os.adminRights
 
     & defaultAccounts @hidden
@@ -154,7 +162,7 @@ category Software {
 
   asset SystemAdminAccount extends Account {
 
-    | attemptUserExecution
+    | attemptUserExecution @hidden
       +> os.systemRights
 
     & defaultAccounts @hidden
@@ -162,7 +170,7 @@ category Software {
 
   }
   asset RootAccount extends Account {
-    | attemptUserExecution
+    | attemptUserExecution @hidden
       +> os.systemRights
   }
 
@@ -187,7 +195,12 @@ category Software {
       -> adminRights,
          bootkit,
          systemFirmware,
-         componentFirmware
+         componentFirmware,
+
+         //_tec
+         _bootkit,
+         _systemFirmware,
+         _componentFirmware
 
     | persistence
 
@@ -203,7 +216,7 @@ category Software {
 
         & python @hidden
 
-    | userExecution
+    | userExecution @hidden
       -> _maliciousLink,
          _maliciousFile,
          userRights
@@ -221,15 +234,12 @@ category Software {
       & maliciousLink @hidden
         -> application._exploitationForClientExecution
 
-    | dataCollected
-        user info: "All techniques under exfiltration tactic"
-
-
     | _exploitationForPrivilegeEscalation @hidden
       -> exploitationForPrivilegeEscalation
 
     & exploitationForPrivilegeEscalation
-      -> systemRights
+      -> systemRights,
+         adminRights
 
     | _shutdown @hidden
       -> shutdown
@@ -237,7 +247,7 @@ category Software {
     & shutdown
 
     | preOsBoot
-      -> persistance
+      -> persistence
 
     | _systemFirmware @hidden
       -> systemFirmware
@@ -257,6 +267,18 @@ category Software {
     & bootkit @hidden
       -> preOsBoot
 
+    | _rootkit @hidden
+      -> rootkit
+
+    & rootkit
+
+    |remoteAccessSoftware
+      -> computer.externalNetwork.remoteAccessSoftware,
+         userRights
+
+    |validAccounts
+
+    /*
     # disableOrRemoveFeatureOrProgram
         user info: "https://attack.mitre.org/techniques/T1064/"
         -> commandAndScriptingInterpreter
@@ -291,6 +313,7 @@ category Software {
     #updateSoftware
       -> exploitationForPrivilegeEscalation,
       application.supplyChainCompromise
+    */
   }
 
   asset Windows extends OS {
@@ -300,7 +323,9 @@ category Software {
          windowsCommandShell,
          VBScript
 
+
     | adminRights
+      -> accessTokenManipulation
 
     | systemRights
 
@@ -359,6 +384,7 @@ category Software {
 
     & sIDHistoryInjection @hidden
 
+/*
     # userAccountManagement
       -> tokenImpersonation,
          createProcessWithToken,
@@ -368,6 +394,7 @@ category Software {
       -> tokenImpersonation,
          createProcessWithToken,
          makeAndImpersonateToken
+*/
 
   }
 
@@ -415,17 +442,20 @@ category Software {
 category Network {
   asset InternalNetwork {
 
-    & remoteAccessSoftware
+    | remoteAccessSoftware
+      -> computer.os.remoteAccessSoftware
 
     | remoteSystemsConnection
       -> dataFromNetworkSharedDrive
 
-    & dataFromNetworkSharedDrive
-      -> computer.os.dataCollected
-      //sensitiveDataCollected
+    | dataFromNetworkSharedDrive
+      -> computer.os.credentials[Data].compromise
+
   }
 
   asset ExternalNetwork {
+  | remoteAccessSoftware
+    -> computer.os.remoteAccessSoftware
   }
 
   asset Firewall {
