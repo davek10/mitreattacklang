@@ -1,0 +1,263 @@
+// enterpriseLang
+// Authors: Wenjun Xiong (wenjx@kth.se), Emeline Legrand, Oscar Åberg
+// Probability distributions: Lina Evensjö
+
+#id: "org.mal_lang.attacklang"
+#version: "1.0.0"
+
+category Person {
+    asset User {
+
+    }
+
+    asset RemoteDesktopUser extends User {
+    }
+
+    asset Administrator {
+
+    }
+
+    asset WindowsAdmin extends Administrator {
+    }
+
+    asset Root extends Administrator {
+
+    }
+
+    asset SysAdmin {
+
+    }
+}
+
+category Software {
+    asset Service {
+
+    }
+
+    asset ThirdpartySoftware extends Service {
+
+    }
+
+    asset VideoCallApplication extends Service {
+
+    }
+
+    asset Browser {
+
+
+    }
+
+    asset OS {
+
+        | infectedOS
+
+        | compromisedSystems // with probability
+
+        | executeCode
+
+        & adminCommandLineInterface
+
+        & userCommandLineInterface
+
+        | graphicalUserInterface
+
+        | systemAccess
+
+        | systemShutdownOrReboot
+
+        | rootkit
+
+        | persistence
+
+        & scripting
+
+        | _validAccounts @hidden
+
+        & validAccounts
+
+        & dataCollected
+
+        | persistance
+    }
+
+    asset Windows extends OS {
+
+        | componentFirmware
+
+        | parentPIDSpoofing
+
+        & _powerShell @hidden
+
+        & powerShell
+
+        | commandExecution
+
+        | attemptSystemFirmware
+
+        & systemFirmware
+
+        & userAccessTokenManipulation
+
+        & adminAccessTokenManipulation
+
+        & bootkit
+
+        | sIDHistoryInjection
+
+
+
+    }
+
+    asset Linux extends OS {
+
+    }
+
+    asset MacOS extends OS {
+    }
+}
+
+category Network {
+    asset InternalNetwork {
+
+
+    }
+
+    asset NetworkSharedDrive extends InternalNetwork {
+    }
+
+    asset ExternalNetwork {
+
+    }
+
+    asset OtherNetworkMedium {
+    }
+
+    asset Firewall {
+    }
+}
+
+category Hardware {
+    asset Computer {
+    }
+
+    asset C2Server extends Computer {
+    }
+
+    asset HardwareAddition extends Computer {
+    }
+
+    asset NTFSPartition extends Computer {
+    }
+
+    asset Webcam {
+    }
+
+    asset RemovableMedia {
+    }
+
+    asset Microphone {
+    }
+}
+
+associations {
+
+    User [user1] * <--Use--> * [os] OS
+    User [windowsUser] * <--Use--> * [windows] Windows
+    User [linuxUser] * <--Use--> * [linux] Linux
+    User [macOSUser] * <--Use--> * [macOS] MacOS
+    User [user2] * <--Use--> * [computer] Computer
+    User [user3] * <--Access--> * [service] Service
+    User [user4] * <--Access--> * [thirdpartySoftware] ThirdpartySoftware
+    User [user5] * <--Use--> * [browser] Browser
+    User [user6] * <--Use--> * [internalNetwork] InternalNetwork
+    User [user7] * <--Use--> * [externalNetwork] ExternalNetwork
+    User [user8] * <--Use--> * [removableMedia] RemovableMedia
+
+    RemoteDesktopUser [windowsRemoteDestopUser] * <--Use--> * [windows1] Windows
+
+    Administrator [administrator1] * <--Manage--> * [user9] User
+    Administrator [administrator2] * <--Use--> * [os1] OS
+    Administrator [windowsAdministrator] * <--Use--> * [windows2] Windows
+    Administrator [linuxAdministrator] * <--Use--> * [linux1] Linux
+    Administrator [macosAdministrator] * <--Use--> * [macOS1] MacOS
+    //Administrator [administrator3] * <--Use--> * [computer1] Computer
+    Administrator [administrator4] * <--Access--> * [service1] Service
+    Administrator [administrator5] * <--Access--> * [thirdpartySoftware1] ThirdpartySoftware
+
+    WindowsAdmin [windowsAdmin] * <--Use--> * [windowsWindowsAdmin] Windows
+
+    //Root [root] * <--Use--> * [os2] OS
+    Root [rootLinux] * <--Use--> * [linux2] Linux
+    Root [rootMac] * <--Use--> * [macOS2] MacOS
+
+    SysAdmin [system] * <--Use--> * [os3] OS
+    SysAdmin [systemWindows] * <--Use--> * [windows3] Windows
+    SysAdmin [system1] * <--Access--> * [service2] Service
+    SysAdmin [system2] * <--Access--> * [thirdpartySoftware2] ThirdpartySoftware
+
+    Browser [browser1] * <--Run--> * [os4] OS
+    Browser [browser2] * <--Run--> * [windows4] Windows
+    Browser [browser11] * <--Access--> 1..* [computer11] Computer
+    Browser [browser4] * <--Access--> * [service3] Service
+    Browser [browser5] * <--Access--> * [thirdpartySoftware3] ThirdpartySoftware
+    Browser [browser6] * <--Communicate--> * [internalNetwork1] InternalNetwork
+    Browser [browser7] * <--Communicate--> * [externalNetwork1] ExternalNetwork
+
+    OS [os5] * <--Operate--> * [computer4] Computer
+    OS [os6] * <--Control--> * [c2Server1] C2Server
+    OS [os7] * <--Contain--> * [windows5] Windows
+    OS [os8] * <--Contain--> * [linux3] Linux
+    OS [os9] * <--Contain--> * [macOS3] MacOS
+    OS [os10] * <--Run--> * [service4] Service
+    OS [os11] * <--Run--> * [thirdpartySoftware4] ThirdpartySoftware
+    OS [os12] * <--Operate--> * [removableMedia2] RemovableMedia
+
+    Computer [computer7] * <--Run--> * [service12] Service
+    Windows [windows6] * <--Run--> * [service5] Service
+    Linux [linux4] * <--Run--> * [service6] Service
+    MacOS [macOS4] * <--Run--> * [service7] Service
+
+    Service [service8] * <--Contain--> * [thirdpartySoftware5] ThirdpartySoftware
+    Service [service9] * <--Control--> * [c2Server2] C2Server
+
+    InternalNetwork [internalNetwork2] * <--Communicate--> * [externalNetwork2] ExternalNetwork
+    InternalNetwork [internalNetwork3] * <--Control--> * [c2Server3] C2Server
+    InternalNetwork [internalNetwork4] * <--Communicate--> * [os13] OS
+    InternalNetwork [internalNetworkWindows] * <--Communicate--> * [windows9] Windows
+    //InternalNetwork [internalNetworkLinux] * <--Communicate--> * [linuxInNet] Linux
+    InternalNetwork [internalNetworkMacOS] * <--Communicate--> * [macOSInNet] MacOS
+
+    InternalNetwork [internalNetwork5] * <--Use--> * [administrator6] Administrator
+    InternalNetwork [internalNetwork6] * <--Communicate--> * [computer5] Computer
+    InternalNetwork [internalNetwork7] * <--Contain--> * [service10] Service
+    InternalNetwork [internalNetwork8] * <--Contain--> * [thirdpartySoftware6] ThirdpartySoftware
+    InternalNetwork [internalNetwork9] * <--Communicate--> * [networkSharedDrive0] NetworkSharedDrive
+    InternalNetwork [internalNetwork10] * <--Communicate--> * [hardwareAddition] HardwareAddition
+    ExternalNetwork [externalNetwork3] * <--Control--> * [c2Server4] C2Server
+    ExternalNetwork [externalNetwork4] * <--Communicate--> * [computer6] Computer
+    ExternalNetwork [externalNetwork5] * <--Communicate--> * [os14] OS
+    ExternalNetwork [externalNetworkWindows] * <--Communicate--> * [windows10] Windows
+    ExternalNetwork [externalNetwork6] * <--Use--> * [administrator7] Administrator
+    ExternalNetwork [externalNetwork7] * <--Contain--> * [service11] Service
+    NetworkSharedDrive [networkSharedDrive1] * <--Communicate--> * [os15] OS
+    NetworkSharedDrive [networkSharedDrive2] * <--Communicate--> * [windows11] Windows
+    OtherNetworkMedium [otherNetworkMedium] * <--Communicate--> * [os16] OS
+
+    Firewall [firewall1] 0..1 <--Protect--> * [os17] OS
+    Firewall [firewall2] 0..1 <--Protect--> * [windows12] Windows
+    Firewall [firewall3] 0..1 <--Protect--> * [linux6] Linux
+    Firewall [firewall4] 0..1 <--Protect--> * [macOS7] MacOS
+    Firewall [firewall5] 0..1 <--Protect--> * [thirdpartySoftware7] ThirdpartySoftware
+    Firewall [firewall6] 0..1 <--Protect--> * [service13] Service
+    InternalNetwork [internalNetwork11] * <--Protect--> 0..1 [firewall6] Firewall
+    //ExternalNetwork [externalNetwork8] * <--Protect--> 0..1 [firewall7] Firewall
+
+    Computer [computer2] * <--Serve--> * [removableMedia1] RemovableMedia
+    Computer [computerWindows] * <--Operate--> * [windows8] Windows
+    Computer [computer8] * <--Serve--> * [microphone] Microphone
+    VideoCallApplication [videoCallApplication] * <--Serve--> * [computer9] Computer
+    Webcam [webcam] * <--Serve--> * [computer10] Computer
+    NTFSPartition [ntfsPartition1] * <--Operate--> * [windows13] Windows
+    NTFSPartition [ntfsPartition2] * <--Operate--> * [windowsComputer] Computer
+    HardwareAddition [hardwareAddition] * <--Operate--> * [os18] OS
+}
